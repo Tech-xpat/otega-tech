@@ -105,25 +105,25 @@ const Contact = () => {
     {
       icon: Mail,
       label: 'Email',
-      value: 'empiredigitalsworldwide@gmail.com',
-      href: 'mailto:empiredigitalsworldwide@gmail.com',
+      value: 'otegatech01@gmail.com',
+      href: 'mailto:otegatech01@gmail.com',
     },
     {
       icon: Phone,
       label: 'Phone',
-      value: '+234 814 265 6848',
-      href: 'tel:+2348142656848',
+      value: '+234 813 100 3708',
+      href: 'tel:+2348131003708',
     },
     {
       icon: MessageCircle,
       label: 'WhatsApp',
-      value: '+234 708 675 7575',
-      href: 'https://wa.me/2347086757575',
+      value: '+234 813 100 3708',
+      href: 'https://wa.me/2348131003708',
     },
     {
       icon: MapPin,
       label: 'Location',
-      value: 'Lagos, Nigeria',
+      value: 'Delta State, Nigeria',
       href: '#',
     },
   ];

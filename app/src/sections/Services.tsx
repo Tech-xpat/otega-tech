@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Code, Palette, Bot, Terminal, ArrowRight } from 'lucide-react';
@@ -69,199 +69,149 @@ const services: Service[] = [
 ];
 
 const Services = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const stackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const ctx = gsap.context(() => {
-      // Heading animation
       gsap.fromTo(
         headingRef.current,
-        { y: 50, opacity: 0 },
+        { y: 40, opacity: 0 },
         {
           y: 0,
           opacity: 1,
           duration: 1,
           ease: 'expo.out',
-          scrollTrigger: {
-            trigger: headingRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none reverse',
-          },
+          scrollTrigger: { trigger: headingRef.current, start: 'top 88%', toggleActions: 'play none none reverse' },
         }
       );
 
-      // Cards stagger animation
-      const cards = cardsRef.current?.querySelectorAll('.service-card');
-      if (cards) {
+      if (reduceMotion) return;
+
+      const sheets = gsap.utils.toArray<HTMLElement>('.paper-sheet');
+      sheets.forEach((sheet, i) => {
+        const inner = sheet.querySelector<HTMLElement>('.paper-inner');
+        const shade = sheet.querySelector<HTMLElement>('.paper-shade');
+        if (!inner) return;
+
+        // 1) The sheet is laid onto the stack: rises, un-tilts and fades in as it scrolls into view.
         gsap.fromTo(
-          cards,
-          { rotateY: 90, opacity: 0, z: -500 },
+          inner,
+          { y: 90, rotate: i % 2 === 0 ? -2 : 2, opacity: 0.2 },
           {
-            rotateY: 0,
+            y: 0,
+            rotate: 0,
             opacity: 1,
-            z: 0,
-            duration: 0.8,
-            ease: 'expo.out',
-            stagger: 0.1,
-            scrollTrigger: {
-              trigger: cardsRef.current,
-              start: 'top 75%',
-              toggleActions: 'play none none reverse',
-            },
+            ease: 'none',
+            scrollTrigger: { trigger: sheet, start: 'top 98%', end: 'top 62%', scrub: 0.6 },
           }
         );
-      }
+
+        // 2) When the next sheet is laid on top, this one sinks back and dims slightly.
+        const next = sheets[i + 1];
+        if (next) {
+          gsap.to(inner, {
+            scale: 0.94,
+            ease: 'none',
+            scrollTrigger: { trigger: next, start: 'top 80%', end: 'top 22%', scrub: 0.6 },
+          });
+          if (shade) {
+            gsap.to(shade, {
+              opacity: 1,
+              ease: 'none',
+              scrollTrigger: { trigger: next, start: 'top 80%', end: 'top 22%', scrub: 0.6 },
+            });
+          }
+        }
+      });
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
-  // Card tilt effect
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>, cardId: number) => {
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = (y - centerY) / 20;
-    const rotateY = (centerX - x) / 20;
-
-    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
-    setHoveredCard(cardId);
-  };
-
-  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.currentTarget.style.transform =
-      'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
-    setHoveredCard(null);
-  };
-
   return (
-    <section
-      ref={sectionRef}
-      id="services"
-      className="relative w-full min-h-screen bg-background py-20 md:py-32"
-    >
+    <section ref={sectionRef} id="services" className="relative w-full bg-background py-20 md:py-32">
       <div className="w-full px-6 md:px-12 lg:px-20">
         {/* Section Header */}
-        <div ref={headingRef} className="mb-16 md:mb-24">
-          <p className="text-xs tracking-[0.3em] text-foreground/62 uppercase font-body mb-4">
-            What We Do
-          </p>
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <h2 className="font-display text-responsive-lg font-bold text-foreground">
-              OUR EXPERTISE
-            </h2>
-            <p className="text-sm text-foreground/62 font-body max-w-md">
-              Combining technical expertise with creative vision to deliver
-              comprehensive digital solutions.
+        <div ref={headingRef} className="mb-12 md:mb-20">
+          <p className="mb-4 font-body text-xs uppercase tracking-[0.3em] text-foreground/62">What We Do</p>
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <h2 className="font-display text-responsive-lg font-bold text-foreground">OUR EXPERTISE</h2>
+            <p className="max-w-md font-body text-sm text-foreground/62">
+              Combining technical expertise with creative vision to deliver comprehensive digital solutions.
             </p>
           </div>
         </div>
 
-        {/* Services Grid */}
-        <div
-          ref={cardsRef}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          style={{ perspective: '1000px' }}
-        >
-          {services.map((service) => {
+        {/* Stack of paper sheets */}
+        <div ref={stackRef} className="mx-auto max-w-5xl pb-10">
+          {services.map((service, i) => {
             const Icon = service.icon;
-            const isHovered = hoveredCard === service.id;
-
             return (
-              <div
+              <article
                 key={service.id}
-                className="service-card relative group"
-                onMouseMove={(e) => handleMouseMove(e, service.id)}
-                onMouseLeave={handleMouseLeave}
-                style={{
-                  transformStyle: 'preserve-3d',
-                  transition: 'transform 0.3s ease-out',
-                }}
+                className="paper-sheet sticky mb-[16vh] last:mb-0"
+                style={{ top: `calc(88px + ${i * 18}px)`, zIndex: i + 1 }}
               >
                 <div
-                  className={`relative p-8 md:p-10 h-full border transition-all duration-500 ${
-                    isHovered
-                      ? 'border-foreground/25 bg-foreground/[0.06]'
-                      : 'border-foreground/[0.12] bg-foreground/[0.04]'
-                  }`}
+                  className="paper-inner relative origin-top overflow-hidden rounded-md border border-foreground/[0.08] bg-card p-7 md:p-12"
+                  style={{
+                    boxShadow:
+                      '0 -14px 36px -18px rgba(14,17,26,0.28), 0 18px 40px -16px rgba(14,17,26,0.22), 0 2px 6px rgba(14,17,26,0.06)',
+                    willChange: 'transform',
+                  }}
                 >
-                  {/* Glow Effect */}
+                  {/* folded paper corner */}
                   <div
-                    className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`}
-                    style={{
-                      background: `radial-gradient(circle at ${isHovered ? '50% 50%' : '50% 50%'}, hsl(var(--brand) / 0.08) 0%, transparent 70%)`,
-                    }}
+                    className="pointer-events-none absolute right-0 top-0 h-9 w-9"
+                    style={{ background: 'linear-gradient(225deg, hsl(var(--background)) 50%, hsl(var(--muted)) 50%)' }}
+                    aria-hidden="true"
+                  />
+                  {/* dims the sheet as the next one covers it */}
+                  <div
+                    className="paper-shade pointer-events-none absolute inset-0 bg-foreground/[0.06] opacity-0"
+                    aria-hidden="true"
                   />
 
-                  {/* Icon */}
-                  <div className="relative mb-6">
-                    <div
-                      className={`w-14 h-14 flex items-center justify-center border transition-all duration-500 ${
-                        isHovered
-                          ? 'border-foreground/35 bg-foreground/[0.06]'
-                          : 'border-foreground/20 bg-transparent'
-                      }`}
-                    >
-                      <Icon
-                        size={24}
-                        className={`transition-colors duration-300 ${
-                          isHovered ? 'text-foreground' : 'text-foreground/70'
-                        }`}
-                      />
+                  <div className="relative grid gap-8 md:grid-cols-[1.2fr_1fr] md:gap-14">
+                    <div>
+                      <div className="mb-6 flex items-center gap-4">
+                        <div className="flex h-14 w-14 items-center justify-center bg-brand text-brand-foreground">
+                          <Icon size={24} />
+                        </div>
+                        <span className="font-display text-5xl font-bold text-foreground/10">0{service.id}</span>
+                      </div>
+                      <h3 className="mb-4 font-display text-3xl font-bold text-foreground md:text-4xl">{service.title}</h3>
+                      <p className="max-w-md font-body text-base leading-relaxed text-foreground/70">
+                        {service.description}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col justify-between gap-8">
+                      <ul className="space-y-3">
+                        {service.features.map((feature) => (
+                          <li
+                            key={feature}
+                            className="flex items-center gap-3 border-b border-foreground/[0.08] pb-3 font-body text-sm text-foreground/75"
+                          >
+                            <span className="h-1.5 w-1.5 rounded-full bg-brand" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                      <a
+                        href="#portfolio"
+                        className="group inline-flex items-center gap-2 font-body text-sm font-medium uppercase tracking-wider text-brand"
+                      >
+                        <span>See our work</span>
+                        <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-2" />
+                      </a>
                     </div>
                   </div>
-
-                  {/* Content */}
-                  <h3 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-4">
-                    {service.title}
-                  </h3>
-
-                  <p className="text-sm text-foreground/70 font-body leading-relaxed mb-6">
-                    {service.description}
-                  </p>
-
-                  {/* Features List */}
-                  <ul className="space-y-2 mb-8">
-                    {service.features.map((feature, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center gap-2 text-sm text-foreground/62 font-body"
-                      >
-                        <span className="w-1 h-1 bg-foreground/25 rounded-full" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* CTA */}
-                  <div
-                    className={`flex items-center gap-2 text-sm font-body tracking-wider uppercase transition-all duration-300 ${
-                      isHovered ? 'text-foreground' : 'text-foreground/62'
-                    }`}
-                  >
-                    <span>Learn More</span>
-                    <ArrowRight
-                      size={16}
-                      className={`transform transition-transform duration-300 ${
-                        isHovered ? 'translate-x-2' : ''
-                      }`}
-                    />
-                  </div>
-
-                  {/* Index */}
-                  <div className="absolute top-8 right-8">
-                    <span className="font-display text-5xl font-bold text-foreground/5">
-                      0{service.id}
-                    </span>
-                  </div>
                 </div>
-              </div>
+              </article>
             );
           })}
         </div>
