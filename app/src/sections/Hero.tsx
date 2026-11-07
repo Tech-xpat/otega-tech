@@ -1,15 +1,15 @@
 import { useEffect, useRef } from 'react';
 
-const NAME = 'OTEGA TECH';
+const TICKER = ['Web Development', 'Brand Design', 'AI Automation', 'Software Development', 'Delta State, Nigeria'];
 
 const Hero = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const portraitRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
 
-  // Subtle mouse parallax. Writes the transform straight to the DOM inside
-  // requestAnimationFrame, so moving the mouse never triggers a React re-render.
+  // Gentle mouse parallax. Writes the transform straight to the DOM inside rAF,
+  // so moving the mouse never triggers a React re-render.
   useEffect(() => {
-    const el = portraitRef.current;
+    const el = stageRef.current;
     const section = sectionRef.current;
     if (!el || !section) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -19,8 +19,8 @@ const Hero = () => {
     let tx = 0;
     let ty = 0;
     const onMove = (e: MouseEvent) => {
-      tx = (e.clientX / window.innerWidth - 0.5) * 14;
-      ty = (e.clientY / window.innerHeight - 0.5) * 10;
+      tx = (e.clientX / window.innerWidth - 0.5) * 12;
+      ty = (e.clientY / window.innerHeight - 0.5) * 8;
       if (!raf) {
         raf = requestAnimationFrame(() => {
           el.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
@@ -35,100 +35,142 @@ const Hero = () => {
     };
   }, []);
 
+  const tag =
+    'absolute z-20 border border-foreground bg-card px-3.5 py-2 font-body text-[11px] font-semibold uppercase tracking-wider text-foreground sm:text-xs';
+  const tagShadow = { boxShadow: '4px 4px 0 hsl(var(--foreground))' };
+
   return (
     <section
       ref={sectionRef}
       id="home"
-      className="relative flex w-full min-h-screen flex-col overflow-hidden bg-background lg:block"
+      className="relative flex min-h-screen w-full flex-col overflow-hidden bg-background lg:block"
     >
-      {/* Soft brand glow behind the portrait (static gradient, no blur filter, so it costs nothing on scroll) */}
-      <div
-        className="pointer-events-none absolute -right-[10%] top-[8%] hidden h-[85%] w-[60%] lg:block"
-        style={{ background: 'radial-gradient(closest-side, hsl(var(--brand) / 0.13), transparent 72%)' }}
-        aria-hidden="true"
-      />
-
-      {/* Portrait: transparent cut-out blended straight into the page, no frame */}
-      <div
-        ref={portraitRef}
-        className="hero-in pointer-events-none relative z-0 order-2 mx-auto -mt-4 w-full max-w-[520px] lg:absolute lg:bottom-0 lg:right-0 lg:order-none lg:mx-0 lg:mt-0 lg:h-[88vh] lg:max-h-[980px] lg:w-auto lg:max-w-none"
-        style={{ animationDelay: '0.15s', willChange: 'transform' }}
-      >
-        <img
-          src="/hero-portrait.webp"
-          srcSet="/hero-portrait-720.webp 720w, /hero-portrait.webp 1226w"
-          sizes="(min-width: 1024px) 45vw, 90vw"
-          width={1226}
-          height={1283}
-          alt="Otega Tech founder in a black polo shirt"
-          className="block h-auto w-full lg:h-full lg:w-auto"
-          style={{
-            WebkitMaskImage:
-              'linear-gradient(to bottom, #000 86%, transparent 100%), linear-gradient(to right, transparent 0, #000 16%)',
-            maskImage:
-              'linear-gradient(to bottom, #000 86%, transparent 100%), linear-gradient(to right, transparent 0, #000 16%)',
-            WebkitMaskComposite: 'source-in',
-            maskComposite: 'intersect',
-          }}
-          fetchPriority="high"
-          decoding="async"
-        />
-      </div>
-
-      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1600px] flex-col justify-center px-6 pb-4 pt-28 md:px-12 lg:px-20 lg:pb-16">
-        <div className="max-w-2xl lg:max-w-[52%]">
+      {/* ---------- Copy ---------- */}
+      <div className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-col justify-center px-6 pb-10 pt-28 md:px-12 lg:min-h-screen lg:px-20 lg:pb-24 lg:pt-24">
+        <div className="max-w-2xl lg:max-w-[50%]">
           <p
-            className="hero-in mb-6 flex items-center gap-3 font-body text-sm text-foreground/70"
+            className="hero-in mb-5 flex items-center gap-3 font-body text-sm font-medium text-foreground/75"
             style={{ animationDelay: '0.1s' }}
           >
-            <span className="h-2 w-2 rounded-full bg-brand" aria-hidden="true" />
-            Websites, brands and automation for growing businesses
+            <span className="h-2.5 w-2.5 bg-brand" aria-hidden="true" />
+            Digital studio in Delta State, Nigeria
           </p>
 
           <h1
-            className="hero-in font-display text-[clamp(3.5rem,11vw,9.5rem)] font-bold leading-[0.9] tracking-tight text-foreground"
+            className="hero-in font-display text-[clamp(4rem,min(12vw,19vh),10.5rem)] font-bold leading-[0.86] tracking-tight text-foreground"
             style={{ animationDelay: '0.2s' }}
           >
-            {NAME.split(' ').map((word) => (
-              <span key={word} className="block">
-                {word}
-              </span>
-            ))}
+            <span className="block">OTEGA</span>
+            <span className="block text-brand">TECH</span>
           </h1>
 
           <p
-            className="hero-in mt-8 max-w-xl font-body text-lg leading-relaxed text-foreground/75 md:text-xl"
+            className="hero-in mt-6 max-w-lg font-body text-lg leading-relaxed text-foreground/75 md:text-xl"
             style={{ animationDelay: '0.4s' }}
           >
-            Otega Tech builds fast, good-looking websites, memorable brand identities and
-            AI automation that saves your team hours every week.
+            We build fast websites, memorable brands and AI automation that give growing businesses
+            more customers and fewer hours of busywork.
           </p>
 
-          <div
-            className="hero-in mt-10 flex flex-col gap-4 sm:flex-row"
-            style={{ animationDelay: '0.55s' }}
-          >
+          <div className="hero-in mt-7 flex flex-col gap-4 sm:flex-row" style={{ animationDelay: '0.55s' }}>
             <a
               href="#portfolio"
-              className="bg-brand px-8 py-4 text-center font-body text-sm font-medium tracking-wide text-brand-foreground transition-colors duration-300 hover:bg-brand/90"
+              className="bg-brand px-8 py-4 text-center font-body text-sm font-medium tracking-wide text-brand-foreground transition-transform duration-300 hover:-translate-y-0.5"
+              style={tagShadow}
             >
               See our work
             </a>
             <a
               href="#contact"
-              className="border border-foreground/25 px-8 py-4 text-center font-body text-sm font-medium tracking-wide text-foreground transition-colors duration-300 hover:bg-foreground hover:text-background"
+              className="border border-foreground px-8 py-4 text-center font-body text-sm font-medium tracking-wide text-foreground transition-colors duration-300 hover:bg-foreground hover:text-background"
             >
               Start a project
             </a>
           </div>
 
           <p
-            className="hero-in mt-10 flex items-center gap-2 font-body text-xs text-foreground/62"
+            className="hero-in mt-7 flex items-center gap-2 font-body text-xs text-foreground/65"
             style={{ animationDelay: '0.7s' }}
           >
             <span className="h-2 w-2 animate-pulse rounded-full bg-green-600" aria-hidden="true" />
-            Taking on new projects in Delta State, Nigeria and worldwide
+            5+ years building for startups, agencies and established brands
           </p>
+        </div>
+      </div>
+
+      {/* ---------- Portrait stage ---------- */}
+      <div
+        className="relative z-0 mx-auto mt-2 w-full max-w-[440px] sm:max-w-[500px] lg:absolute lg:bottom-0 lg:-right-[3%] lg:mx-0 lg:mt-0 lg:h-[80vh] lg:max-h-[900px] lg:w-auto lg:max-w-none"
+        style={{ aspectRatio: '1226 / 1283' }}
+      >
+        <div ref={stageRef} className="hero-in absolute inset-0" style={{ animationDelay: '0.15s', willChange: 'transform' }}>
+          {/* flat cobalt disc + offset outline ring */}
+          <div
+            className="absolute rounded-full border border-foreground"
+            style={{ left: '12%', top: '25%', width: '78%', aspectRatio: '1', transform: 'translate(14px, 14px)' }}
+            aria-hidden="true"
+          />
+          <div
+            className="absolute rounded-full bg-brand"
+            style={{ left: '12%', top: '25%', width: '78%', aspectRatio: '1' }}
+            aria-hidden="true"
+          />
+
+          <img
+            src="/hero-portrait.webp"
+            srcSet="/hero-portrait-720.webp 720w, /hero-portrait.webp 1226w"
+            sizes="(min-width: 1024px) 42vw, 90vw"
+            width={1226}
+            height={1283}
+            alt="Otega Tech founder in a black polo shirt"
+            className="absolute inset-0 h-full w-full"
+            fetchPriority="high"
+            decoding="async"
+          />
+
+          {/* floating tags */}
+          <span className={`${tag} animate-float`} style={{ ...tagShadow, left: '2%', top: '38%' }}>
+            Web Development
+          </span>
+          <span className={`${tag} animate-float`} style={{ ...tagShadow, right: '15%', top: '55%', animationDelay: '-2s' }}>
+            AI Automation
+          </span>
+          <span className={`${tag} animate-float`} style={{ ...tagShadow, left: '2%', top: '70%', animationDelay: '-4s' }}>
+            Brand Design
+          </span>
+
+          {/* rotating badge */}
+          <div
+            className="absolute z-20 hidden h-28 w-28 items-center justify-center rounded-full border border-foreground bg-card sm:flex"
+            style={{ right: '12%', top: '7%' }}
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 120 120" className="absolute inset-0 h-full w-full animate-spin-slow">
+              <defs>
+                <path id="badgePath" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0" />
+              </defs>
+              <text fontSize="10.5" fontWeight="600" fill="currentColor" className="font-body uppercase text-foreground">
+                <textPath href="#badgePath" textLength="274" lengthAdjust="spacing">Delta State • Nigeria • Otega Tech •</textPath>
+              </text>
+            </svg>
+            <span className="font-display text-2xl font-bold text-brand">OT</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ---------- Ticker band: the portrait stands on this ---------- */}
+      <div className="absolute inset-x-0 bottom-0 z-30 flex h-14 items-center overflow-hidden bg-foreground md:h-16" aria-hidden="true">
+        <div className="flex w-max animate-marquee whitespace-nowrap">
+          {[0, 1].map((dup) => (
+            <div key={dup} className="flex items-center">
+              {TICKER.map((t) => (
+                <span key={t + dup} className="flex items-center font-display text-sm font-bold uppercase tracking-[0.22em] text-background md:text-base">
+                  <span className="px-6 md:px-9">{t}</span>
+                  <span className="text-[#7C9BFF]">✦</span>
+                </span>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </section>
