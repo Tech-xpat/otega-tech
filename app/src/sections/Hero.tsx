@@ -75,8 +75,7 @@ const Hero = () => {
           <div className="hero-in mt-7 flex flex-col gap-4 sm:flex-row" style={{ animationDelay: '0.55s' }}>
             <a
               href="#portfolio"
-              className="bg-brand px-8 py-4 text-center font-body text-sm font-medium tracking-wide text-brand-foreground transition-transform duration-300 hover:-translate-y-0.5"
-              style={tagShadow}
+              className="press-deep bg-brand px-8 py-4 text-center font-body text-sm font-medium tracking-wide text-brand-foreground"
             >
               See our work
             </a>
@@ -166,7 +165,7 @@ const Hero = () => {
               {TICKER.map((t) => (
                 <span key={t + dup} className="flex items-center font-display text-sm font-bold uppercase tracking-[0.22em] text-background md:text-base">
                   <span className="px-6 md:px-9">{t}</span>
-                  <span className="text-[#7C9BFF]">✦</span>
+                  <span className="h-4 w-px bg-background/30" />
                 </span>
               ))}
             </div>

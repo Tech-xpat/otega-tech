@@ -433,3 +433,31 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-float, .animate-spin-slow, .animate-marquee { animation: none; }
 }
+
+/* ---------- Press feedback (see lib/pressFeedback.ts) ---------- */
+/* Uses the individual `scale` / `translate` properties so it never fights an element's own transform. */
+.is-pressed {
+  scale: 0.955;
+  transition:
+    scale 0.14s cubic-bezier(0.2, 0.8, 0.2, 1),
+    translate 0.14s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.14s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.2s, color 0.2s, border-color 0.2s !important;
+}
+
+/* Raised "key" buttons: the hard shadow collapses and the button drops into it */
+.press-deep {
+  box-shadow: 4px 4px 0 hsl(var(--foreground));
+  transition: translate 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (hover: hover) {
+  .press-deep:hover { translate: -1px -1px; box-shadow: 5px 5px 0 hsl(var(--foreground)); }
+}
+.press-deep.is-pressed {
+  scale: 1;
+  translate: 4px 4px;
+  box-shadow: 0 0 0 hsl(var(--foreground));
+}
+@media (prefers-reduced-motion: reduce) {
+  .is-pressed, .press-deep { transition: none !important; }
+}

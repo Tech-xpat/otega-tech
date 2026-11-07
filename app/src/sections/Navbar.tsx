@@ -101,6 +101,7 @@ const Navbar = () => {
             {/* Logo */}
             <a
               href="#home"
+              data-no-press
               onClick={handleAdminLogoClick}
               className="font-display text-2xl font-bold text-foreground tracking-tight hover:opacity-80 transition-opacity cursor-pointer relative group"
               title={adminClicks > 0 ? `Admin: ${adminClicks}/5` : 'Otega Tech'}
