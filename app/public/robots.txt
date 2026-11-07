@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /greatness
+
+Sitemap: https://otegatech.space/sitemap.xml

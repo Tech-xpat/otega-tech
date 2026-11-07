@@ -1,0 +1,201 @@
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Twitter, Linkedin, Instagram, Dribbble, Github, ArrowUpRight } from 'lucide-react';
+import NewsletterSignup from '../components/NewsletterSignup';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const Footer = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const fillRef = useRef<HTMLDivElement>(null);
+
+  const socialLinks = [
+    { name: 'Twitter', icon: Twitter, href: 'https://twitter.com/otegatech' },
+    { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com/company/otegatech' },
+    { name: 'Instagram', icon: Instagram, href: 'https://instagram.com/otegatech' },
+    { name: 'Dribbble', icon: Dribbble, href: 'https://dribbble.com/otegatech' },
+    { name: 'GitHub', icon: Github, href: 'https://github.com/otegatech' },
+  ];
+
+  const navLinks = [
+    { name: 'Home', href: '#home' },
+    { name: 'About', href: '#about' },
+    { name: 'Portfolio', href: '#portfolio' },
+    { name: 'Services', href: '#services' },
+    { name: 'Contact', href: '#contact' },
+  ];
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        fillRef.current,
+        { clipPath: 'inset(0 0 100% 0)' },
+        {
+          clipPath: 'inset(0 0 0% 0)',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 80%',
+            end: 'top 20%',
+            scrub: 1,
+          },
+        }
+      );
+
+      gsap.fromTo(
+        '.social-link',
+        { y: 30, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: 'expo.out',
+          stagger: 0.05,
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 70%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  const scrollToTarget = (href: string) => {
+    if (!href.startsWith('#')) return;
+    const target = document.querySelector(href);
+    if (!target) return;
+    const lenis = (window as any).__lenis;
+    if (lenis?.scrollTo) {
+      lenis.scrollTo(target, { offset: 0, duration: 1.1 });
+    } else {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      scrollToTarget(href);
+    }
+  };
+
+  return (
+    <footer ref={sectionRef} className="relative w-full bg-background pt-20 md:pt-32 pb-8">
+      <div className="w-full px-6 md:px-12 lg:px-20 mb-20">
+        <div className="mb-6">
+          <p className="text-xs tracking-[0.3em] text-foreground/62 uppercase font-body mb-4">
+            Newsletter
+          </p>
+        </div>
+        <NewsletterSignup />
+      </div>
+
+      <div className="w-full px-6 md:px-12 lg:px-20">
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-12 mb-20">
+          <div>
+            <p className="text-xs tracking-[0.3em] text-foreground/62 uppercase font-body mb-4">
+              Start a Project
+            </p>
+            <a
+              href="mailto:empiredigitalsworldwide@gmail.com"
+              className="font-display text-2xl md:text-3xl font-bold text-foreground hover:text-foreground/85 transition-colors duration-300"
+            >
+              empiredigitalsworldwide@gmail.com
+            </a>
+          </div>
+
+          <div className="flex flex-wrap gap-4">
+            {socialLinks.map((social) => {
+              const Icon = social.icon;
+              return (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="social-link w-12 h-12 flex items-center justify-center border border-foreground/20 text-foreground/70 hover:border-foreground/35 hover:text-foreground transition-all duration-300"
+                  aria-label={social.name}
+                >
+                  <Icon size={20} />
+                </a>
+              );
+            })}
+          </div>
+        </div>
+
+        <div ref={ctaRef} className="relative py-16 md:py-24 border-t border-b border-foreground/[0.12]">
+          <a
+            href="#contact"
+            onClick={(e) => handleLinkClick(e, '#contact')}
+            className="group block relative overflow-hidden"
+          >
+            <h2 className="font-display text-[15vw] md:text-[12vw] font-bold text-stroke leading-none text-center">
+              LET'S TALK
+            </h2>
+
+            <div
+              ref={fillRef}
+              className="absolute inset-0 overflow-hidden"
+              style={{ clipPath: 'inset(0 0 100% 0)' }}
+            >
+              <h2 className="font-display text-[15vw] md:text-[12vw] font-bold text-brand leading-none text-center">
+                LET'S TALK
+              </h2>
+            </div>
+
+            <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <ArrowUpRight size={48} className="text-foreground" />
+            </div>
+          </a>
+        </div>
+
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8 pt-8">
+          <a
+            href="#home"
+            onClick={(e) => handleLinkClick(e, '#home')}
+            className="font-display text-2xl font-bold text-foreground tracking-tight"
+          >
+            Otega Tech
+          </a>
+
+          <nav className="flex flex-wrap gap-6">
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                onClick={(e) => handleLinkClick(e, link.href)}
+                className="text-sm text-foreground/62 hover:text-foreground font-body tracking-wider uppercase transition-colors duration-300"
+              >
+                {link.name}
+              </a>
+            ))}
+          </nav>
+
+          <p className="text-xs text-foreground/55 font-body">
+            © {new Date().getFullYear()} Otega Tech. All rights reserved.
+          </p>
+        </div>
+      </div>
+
+      <button
+        onClick={() => {
+          const lenis = (window as any).__lenis;
+          if (lenis?.scrollTo) lenis.scrollTo(0, { duration: 1.1 });
+          else window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        className="fixed bottom-8 right-8 w-12 h-12 bg-brand text-brand-foreground flex items-center justify-center hover:bg-brand/90 transition-all duration-300 z-50 opacity-0 pointer-events-none"
+        id="back-to-top"
+        aria-label="Back to top"
+      >
+        <ArrowUpRight size={20} className="-rotate-45" />
+      </button>
+    </footer>
+  );
+};
+
+export default Footer;
