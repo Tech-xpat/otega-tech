@@ -1,4 +1,5 @@
 import ThemeToggle from '@/components/ThemeToggle';
+import { scrollToHash } from '@/lib/scroll';
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import gsap from 'gsap';
@@ -62,12 +63,7 @@ const Navbar = () => {
       return;
     }
 
-    const target = document.querySelector(href);
-    if (target) {
-      const lenis = (window as any).__lenis;
-      if (lenis?.scrollTo) lenis.scrollTo(target, { offset: 0, duration: 1.1 });
-      else target.scrollIntoView({ behavior: 'smooth' });
-    }
+    scrollToHash(href);
   };
 
   const handleAdminLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {

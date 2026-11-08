@@ -2,6 +2,25 @@ import { useEffect, useRef } from 'react';
 
 const TICKER = ['Web Development', 'Brand Design', 'AI Automation', 'Software Development', 'Delta State, Nigeria'];
 
+const BUBBLES: {
+  style: React.CSSProperties;
+  cls: string;
+  hide?: string;
+}[] = [
+  // big soft shape behind the headline
+  { style: { left: '-7%', top: '44%', width: 'clamp(220px, 28vw, 440px)', aspectRatio: '1' }, cls: 'bg-foreground/[0.055] animate-drift', hide: '' },
+  // outlines
+  { style: { left: '27%', top: '9%', width: 'clamp(110px, 15vw, 230px)', aspectRatio: '1', animationDelay: '-4s' }, cls: 'border border-foreground/[0.22] animate-drift', hide: '' },
+  { style: { left: '-12%', top: '72%', width: 'clamp(200px, 24vw, 380px)', aspectRatio: '1', animationDelay: '-8s' }, cls: 'border border-foreground/[0.14] animate-drift', hide: '' },
+  { style: { left: '47%', top: '60%', width: 'clamp(70px, 9vw, 150px)', aspectRatio: '1', animationDelay: '-2s' }, cls: 'border border-foreground/[0.2] animate-drift', hide: 'hidden lg:block' },
+  // solid bubbles
+  { style: { left: '58%', top: '31%', width: 'clamp(28px, 3.6vw, 58px)', aspectRatio: '1', animationDelay: '-6s' }, cls: 'bg-foreground/[0.88] animate-drift', hide: 'hidden md:block' },
+  { style: { left: '41%', top: '22%', width: 'clamp(14px, 1.6vw, 26px)', aspectRatio: '1', animationDelay: '-3s' }, cls: 'bg-foreground/[0.88] animate-drift', hide: 'hidden md:block' },
+  { style: { left: '33%', top: '75%', width: 'clamp(18px, 2.2vw, 36px)', aspectRatio: '1', animationDelay: '-9s' }, cls: 'bg-brand animate-drift', hide: 'hidden md:block' },
+  { style: { left: '52%', top: '14%', width: 'clamp(40px, 5vw, 84px)', aspectRatio: '1', animationDelay: '-5s' }, cls: 'bg-foreground/[0.1] animate-drift', hide: 'hidden lg:block' },
+  { style: { left: '18%', top: '88%', width: 'clamp(12px, 1.2vw, 20px)', aspectRatio: '1', animationDelay: '-7s' }, cls: 'bg-foreground/[0.7] animate-drift', hide: 'hidden md:block' },
+];
+
 const Hero = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -45,6 +64,13 @@ const Hero = () => {
       id="home"
       className="relative flex min-h-screen w-full flex-col overflow-hidden bg-background lg:block"
     >
+      {/* ---------- Bubbles: dark in light mode, light in dark mode (they follow the text colour) ---------- */}
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+        {BUBBLES.map((b, i) => (
+          <span key={i} className={`absolute rounded-full ${b.cls} ${b.hide ?? ''}`} style={b.style} />
+        ))}
+      </div>
+
       {/* ---------- Copy ---------- */}
       <div className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-col justify-center px-6 pb-10 pt-28 md:px-12 lg:min-h-screen lg:px-20 lg:pb-24 lg:pt-24">
         <div className="max-w-2xl lg:max-w-[50%]">

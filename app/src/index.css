@@ -488,3 +488,44 @@
 @media (prefers-reduced-motion: reduce) {
   .is-pressed, .press-deep { transition: none !important; }
 }
+
+/* ---------- Stacked section layers (see components/StackLayer.tsx) ---------- */
+.stack-layer {
+  position: sticky;
+  top: 0;
+  background: hsl(var(--background));
+  overflow-x: clip; /* items that animate in from the side never widen the page; cheap rectangular clip */
+}
+/* The layer paints the background (so its rounded corners need no clipping, which is expensive on
+   tall layers); the section inside is transparent. */
+.stack-layer > section { background: transparent; }
+.stack-sheet {
+  border-top: 1px solid hsl(var(--foreground) / 0.08);
+  border-radius: 1.75rem 1.75rem 0 0;
+  box-shadow: 0 -18px 44px -22px rgba(14, 17, 26, 0.38);
+}
+@media (min-width: 768px) {
+  .stack-sheet { border-radius: 2.5rem 2.5rem 0 0; }
+}
+/* Dim overlay: only rendered while the next layer is sliding over this one */
+.stack-dim {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+/* A layer completely covered by later layers is not painted at all and its animations pause */
+.stack-hidden { visibility: hidden; }
+.stack-hidden * { animation-play-state: paused !important; }
+
+/* Hero bubbles: slow drifting, transform-only */
+@keyframes drift {
+  0%   { transform: translate3d(0, 0, 0); }
+  50%  { transform: translate3d(14px, -22px, 0); }
+  100% { transform: translate3d(-10px, 12px, 0); }
+}
+.animate-drift { animation: drift 12s ease-in-out infinite alternate; }
+@media (prefers-reduced-motion: reduce) { .animate-drift { animation: none; } }

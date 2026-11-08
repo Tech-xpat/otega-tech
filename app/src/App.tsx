@@ -15,6 +15,8 @@ import AIAutomation from './sections/AIAutomation';
 import Services from './sections/Services';
 import Contact from './sections/Contact';
 import Footer from './sections/Footer';
+import StackLayer from './components/StackLayer';
+import { scrollToHash } from './lib/scroll';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -81,8 +83,21 @@ function App() {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
 
+    // Smooth, stack-aware scrolling for every in-page "#section" link
+    const onAnchorClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const link = (e.target as HTMLElement).closest?.('a[href^="#"]') as HTMLAnchorElement | null;
+      if (!link) return;
+      const hash = link.getAttribute('href') || '';
+      if (hash.length < 2 || !document.querySelector(hash)) return;
+      e.preventDefault();
+      scrollToHash(hash);
+    };
+    document.addEventListener('click', onAnchorClick);
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('click', onAnchorClick);
       gsap.ticker.remove(tick);
       lenis.destroy();
       lenisRef.current = null;
@@ -90,32 +105,70 @@ function App() {
     };
   }, []);
 
+  // As each layer is covered by the next one it dims slightly; once fully covered it stops painting.
+  useEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const ctx = gsap.context(() => {
+      const layers = gsap.utils.toArray<HTMLElement>('[data-stack-layer]');
+      layers.forEach((layer, i) => {
+        const next = layers[i + 1];
+        if (!next) return;
+
+        // fully covered -> skip painting and pause its animations
+        ScrollTrigger.create({
+          trigger: next,
+          start: 'top top-=40',
+          end: 'max',
+          onToggle: (self) => layer.classList.toggle('stack-hidden', self.isActive),
+        });
+
+        const dim = layer.querySelector<HTMLElement>('.stack-dim');
+        if (reduceMotion || !dim) return;
+        gsap.fromTo(
+          dim,
+          { opacity: 0 },
+          {
+            opacity: 0.4,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: next,
+              start: 'top bottom',
+              end: 'top top',
+              scrub: true,
+              onToggle: (self) => {
+                dim.style.display = self.isActive ? 'block' : 'none';
+              },
+            },
+          }
+        );
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
   // Scroll to a section requested from another page (no "#" in the URL)
   useEffect(() => {
     const target = (location.state as { scrollTo?: string } | null)?.scrollTo;
     if (!target || target === '#home') return;
     const t = setTimeout(() => {
-      const el = document.querySelector(target);
-      const lenis = (window as any).__lenis;
-      if (el && lenis?.scrollTo) lenis.scrollTo(el as HTMLElement, { duration: 1.1 });
-      else el?.scrollIntoView({ behavior: 'smooth' });
+      scrollToHash(target);
     }, 400);
     return () => clearTimeout(t);
   }, [location.state]);
 
   return (
     <div className="relative bg-background min-h-screen">
-      <div className="grain-overlay" aria-hidden="true" />
       <Navbar />
       <main>
-        <Hero />
-        <About />
-        <Portfolio />
-        <WebDevelopment />
-        <BrandDesign />
-        <AIAutomation />
-        <Services />
-        <Contact />
+        <div>
+          {[Hero, About, Portfolio, WebDevelopment, BrandDesign, AIAutomation, Services, Contact].map(
+            (Section, i) => (
+              <StackLayer key={i} index={i}>
+                <Section />
+              </StackLayer>
+            )
+          )}
+        </div>
         <Footer />
       </main>
     </div>
