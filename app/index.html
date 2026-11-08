@@ -3,8 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#F5F6F8" />
+
+    <!-- Apply the saved theme before first paint (no light/dark flash) -->
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem('otega-theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0E1119');
+          }
+        } catch (e) {}
+      })();
+    </script>
 
     <!-- Primary SEO Meta Tags -->
     <title>Otega Tech | Web Development, Brand Design & AI Automation</title>
@@ -101,6 +114,7 @@
 
     <style>
       html, body { background-color: #F5F6F8; color: #0E1119; margin: 0; }
+      html.dark, html.dark body { background-color: #0E1119; color: #F0F2F7; }
     </style>
   </head>
   <body>

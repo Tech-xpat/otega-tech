@@ -75,7 +75,7 @@ const NotFound = () => {
           className="absolute inset-0 opacity-5"
           style={{
             backgroundImage:
-              'linear-gradient(0deg, transparent 24%, rgba(14,17,26,.06) 25%, rgba(14,17,26,.06) 26%, transparent 27%, transparent 74%, rgba(14,17,26,.06) 75%, rgba(14,17,26,.06) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(14,17,26,.06) 25%, rgba(14,17,26,.06) 26%, transparent 27%, transparent 74%, rgba(14,17,26,.06) 75%, rgba(14,17,26,.06) 76%, transparent 77%, transparent)',
+              'linear-gradient(0deg, transparent 24%, hsl(var(--foreground) / 0.07) 25%, hsl(var(--foreground) / 0.07) 26%, transparent 27%, transparent 74%, hsl(var(--foreground) / 0.07) 75%, hsl(var(--foreground) / 0.07) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, hsl(var(--foreground) / 0.07) 25%, hsl(var(--foreground) / 0.07) 26%, transparent 27%, transparent 74%, hsl(var(--foreground) / 0.07) 75%, hsl(var(--foreground) / 0.07) 76%, transparent 77%, transparent)',
             backgroundSize: '60px 60px',
           }}
         />

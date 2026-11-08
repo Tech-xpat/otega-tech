@@ -1,3 +1,4 @@
+import ThemeToggle from '@/components/ThemeToggle';
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import gsap from 'gsap';
@@ -129,23 +130,26 @@ const Navbar = () => {
               ))}
             </div>
 
-            {/* CTA Button */}
-            <a
-              href="#contact"
-              onClick={(e) => handleLinkClick(e, '#contact')}
-              className="hidden md:block px-6 py-3 border border-foreground/25 text-foreground text-sm font-body tracking-wider uppercase hover:bg-foreground hover:text-background transition-all duration-300"
-            >
-              Let's Talk
-            </a>
+            {/* Theme toggle + CTA + mobile menu */}
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
 
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-foreground"
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+              <a
+                href="#contact"
+                onClick={(e) => handleLinkClick(e, '#contact')}
+                className="hidden md:block px-6 py-3 border border-foreground/25 text-foreground text-sm font-body tracking-wider uppercase hover:bg-foreground hover:text-background transition-all duration-300"
+              >
+                Let's Talk
+              </a>
+
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden p-2 text-foreground"
+                aria-label="Toggle menu"
+              >
+                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
           </div>
         </div>
       </nav>

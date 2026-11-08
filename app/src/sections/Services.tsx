@@ -171,7 +171,7 @@ const Services = () => {
                   />
                   {/* dims the sheet as the next one covers it */}
                   <div
-                    className="paper-shade pointer-events-none absolute inset-0 bg-foreground/[0.06] opacity-0"
+                    className="paper-shade pointer-events-none absolute inset-0 bg-black/[0.05] opacity-0 dark:bg-black/35"
                     aria-hidden="true"
                   />
 
